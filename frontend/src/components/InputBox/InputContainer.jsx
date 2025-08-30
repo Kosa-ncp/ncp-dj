@@ -4,15 +4,9 @@ import { Search, Sparkles } from "lucide-react";
 const InputContainer = ({ mood, setMood, setRecommendations }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const getResults = async (mood) => {
+  const getResults = async () => {
     try {
-      const response = await fetch("http://localhost:5000/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mood }),
-      });
+      const response = await fetch("http://127.0.0.1:5000/");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
