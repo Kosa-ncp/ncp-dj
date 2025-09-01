@@ -1,30 +1,9 @@
 import { useState } from "react";
 import { Search, Sparkles } from "lucide-react";
+import getResults from "../../utils/getResults";
 
 const InputContainer = ({ mood, setMood, setRecommendations }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  const getResults = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/analyze-mood", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mood }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-      return null;
-    }
-  };
 
   const handleMoodSubmit = async (e) => {
     e.preventDefault();
