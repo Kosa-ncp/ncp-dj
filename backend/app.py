@@ -29,7 +29,7 @@ class HyperClovaAPI:
             'Content-Type': 'application/json'
         }
 
-    def chat_completion(self, messages, max_tokens=500, temperature=0.3):
+    def chat_completion(self, messages, max_tokens=100, temperature=0.3, retries=3, delay=2):
         payload = {
             'messages': messages,
             'topP': 0.8,
@@ -40,13 +40,19 @@ class HyperClovaAPI:
             'stopBefore': [],
             'includeAiFilters': True
         }
-        try:
-            resp = requests.post(self.API_URL, headers=self.headers, json=payload, timeout=10)
-            resp.raise_for_status()
-            return resp.json()
-        except Exception as e:
-            print(f"[HyperClovaAPI] 호출 오류: {e}")
-            return None
+        for attempt in range(1, retries + 1):
+          try:
+              resp = requests.post(self.API_URL, headers=self.headers, json=payload, timeout=30)
+              resp.raise_for_status()
+              return resp.json()
+          except Exception as e:
+              print(f"[HyperClovaAPI] 시도 {attempt} 실패: {e}")
+              if attempt < retries:
+                  print(f"[HyperClovaAPI] {delay}초 후 재시도...")
+                  time.sleep(delay)
+              else:
+                  print("[HyperClovaAPI] 모든 재시도 실패")
+                  return None
 
 hyperclova_api = HyperClovaAPI(HYPERCLOVA_API_KEY)
 
@@ -85,7 +91,7 @@ class SpotifyAPI:
         headers = {'Authorization': f'Bearer {token}'}
         params = {'q': query, 'type': 'track', 'limit': limit, 'market': 'KR'}
         try:
-            resp = requests.get(self.SEARCH_URL, headers=headers, params=params, timeout=5)
+            resp = requests.get(self.SEARCH_URL, headers=headers, params=params, timeout=60)
             resp.raise_for_status()
             tracks = resp.json().get('tracks', {}).get('items', [])
             if tracks:
