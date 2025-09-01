@@ -15,7 +15,7 @@ const RecomendedSongContainer = ({ recommendations }) => {
             className="bg-white/20 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between hover:bg-white/30 transition-all duration-300 group">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Music size={20} className="text-white" />
+                <img src={song.image_url} className="w-full h-full" />
               </div>
               <div>
                 <h4 className="text-white font-medium">{song.title}</h4>
@@ -25,7 +25,9 @@ const RecomendedSongContainer = ({ recommendations }) => {
                 </span>
               </div>
             </div>
-            <button className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-300 transform group-hover:scale-110">
+            <button
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-300 transform group-hover:scale-110"
+              onClick={() => window.open(song.spotify_url, "_blank")}>
               <Play size={16} />
             </button>
           </div>

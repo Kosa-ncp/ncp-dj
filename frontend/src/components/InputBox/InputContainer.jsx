@@ -6,7 +6,13 @@ const InputContainer = ({ mood, setMood, setRecommendations }) => {
 
   const getResults = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/");
+      const response = await fetch("http://127.0.0.1:5000/api/analyze-mood", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mood }),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -23,35 +29,16 @@ const InputContainer = ({ mood, setMood, setRecommendations }) => {
   const handleMoodSubmit = async (e) => {
     e.preventDefault();
     if (!mood.trim()) return;
-
-    const results = await getResults(mood);
-
-    console.log(results);
-
     setIsAnalyzing(true);
 
-    setTimeout(() => {
-      const mockRecommendations = {
-        emotion:
-          mood.includes("슬픔") || mood.includes("우울")
-            ? "슬픔"
-            : mood.includes("기쁘") || mood.includes("행복")
-            ? "기쁨"
-            : mood.includes("화나") || mood.includes("짜증")
-            ? "분노"
-            : mood.includes("외로")
-            ? "외로움"
-            : "평온",
-        songs: [
-          { title: "Spring Day", artist: "BTS", genre: "K-Pop" },
-          { title: "Through the Night", artist: "IU", genre: "Ballad" },
-          { title: "Palette", artist: "IU ft. G-Dragon", genre: "R&B" },
-          { title: "Eight", artist: "IU & SUGA", genre: "Pop" },
-        ],
-      };
-      setRecommendations(mockRecommendations);
-      setIsAnalyzing(false);
-    }, 2000);
+    const results = await getResults(mood);
+    const recommendations = {
+      emotion: results.analysis.emotion,
+      songs: results.recommendations,
+    };
+
+    setRecommendations(recommendations);
+    setIsAnalyzing(false);
   };
 
   return (
